@@ -100,7 +100,7 @@
         const queryList = document.getElementById("query-list");
 
         // Create a WebSocket connection to the server
-        const ws = new WebSocket("ws://"+location.hostname+":8080");
+        const ws = new WebSocket("ws://"+location.hostname+":80");
 
         // Add an event listener for when the WebSocket connection is established
         ws.addEventListener("open", function () {

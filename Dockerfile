@@ -27,6 +27,11 @@ COPY --from=install /temp/prod/node_modules node_modules
 COPY --from=prerelease /usr/src/app/index.ts .
 COPY --from=prerelease /usr/src/app/package.json .
 
+
+RUN touch items.json
+RUN touch data.json
+RUN echo "[]" > items.json
+RUN echo "[]" > data.json
 # run the app
 USER bun
 EXPOSE 80/tcp
