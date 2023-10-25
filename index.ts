@@ -68,7 +68,7 @@ async function removeQuery(query:string){
 }
 
 Bun.serve({
-    port: 8080,
+    port: 80,
     fetch(req, server) {
         // upgrade the request to a WebSocket
         if (server.upgrade(req)) {
