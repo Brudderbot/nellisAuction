@@ -126,7 +126,7 @@ async function main() {
             const product = body.products[index];
                 var diff = Date.parse(product.dateClosed.value) - Date.now();
 
-                if (diff > 0 && diff > 1800 && product.sold == 0 && !checkForItem(data,product)) {
+                if (diff > 0 && diff <= 1800 && product.sold == 0 && !checkForItem(data,product)) {
                     product.item.query = query;
                     data.push(hashCode(product.dateAdded.value + product.title));
                     Bun.write(dataFile, JSON.stringify(data))
