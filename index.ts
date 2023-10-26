@@ -138,7 +138,7 @@ async function main() {
                             "message": "Current price: " + product.wprice + ", Retail price: " + product.item.retailPrice,
                             "title": product.title,
                             "attach": product.item.photos[0].url,
-                            "click": encodeURI("https://www.nellisauction.com/p/" + product.title.replace(/\s/g, "-") + "/" + product.bidState.projectId)
+                            "click": encodeURI("https://www.nellisauction.com/p/" + product.title.replace(/\s/g, "-").replace(/\//g, "-") + "/" + product.bidState.projectId)
                         })
                     })
 
