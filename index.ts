@@ -13,7 +13,7 @@ const data3min = JSON.parse(await dataFile.text());
  * @return {Number}    A 32bit integer
  * @see http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
  */
-function hashCode(str:string) {
+function hashCode(str: string) {
     let hash = 0;
     for (let i = 0, len = str.length; i < len; i++) {
         let chr = str.charCodeAt(i);
@@ -29,14 +29,14 @@ function hashCode(str:string) {
  * @param  {any} item The item to check for.
  * @return {boolean}
  */
-function checkForItem(list:Array<Number>, item:any){
+function checkForItem(list: Array<Number>, item: any) {
     const hash = hashCode(item.dateAdded.value + item.title)
 
     for (let index = 0; index < list.length; index++) {
-        if (list[index] == hash){
+        if (list[index] == hash) {
             return true;
         }
-        
+
     }
     return false;
 }
@@ -46,9 +46,9 @@ function checkForItem(list:Array<Number>, item:any){
  * @param  {string} query The query to add the the items.json file.
  * @return {boolean}
  */
-async function addQuery(query:string){
+async function addQuery(query: string) {
     const itemsFile = Bun.file("items.json");
-    const items = JSON.parse( await itemsFile.text());
+    const items = JSON.parse(await itemsFile.text());
 
     items.push(query);
     Bun.write(itemsFile, JSON.stringify(items));
@@ -59,9 +59,9 @@ async function addQuery(query:string){
  * @param  {string} query The query to add the the items.json file.
  * @return {boolean}
  */
-async function removeQuery(query:string){
+async function removeQuery(query: string) {
     const itemsFile = Bun.file("items.json");
-    const items = JSON.parse( await itemsFile.text());
+    const items = JSON.parse(await itemsFile.text());
 
     const index = items.indexOf(query);
     if (index > -1) { // only splice array when item is found
@@ -74,43 +74,43 @@ Bun.serve({
     fetch(req, server) {
         // upgrade the request to a WebSocket
         if (server.upgrade(req)) {
-          return; // do not return a Response
+            return; // do not return a Response
         }
         return new Response(Bun.file("./index.html"));
-      }, // upgrade logic
+    }, // upgrade logic
     websocket: {
         // code 500 is invalid json
         // code 404 is type not found
-      async message(ws, message) {
-        try {
-            const msgJson = JSON.parse(message.toString())
-            switch (msgJson.type) {
-                case "add":
-                    addQuery(msgJson.query);
-                break;
-                    
-                case "remove":
-                    removeQuery(msgJson.query);
-                break;
+        async message(ws, message) {
+            try {
+                const msgJson = JSON.parse(message.toString())
+                switch (msgJson.type) {
+                    case "add":
+                        addQuery(msgJson.query);
+                        break;
 
-                case "get":
-                    const items = await Bun.file("items.json").text();
-                    ws.send(items);
-                break;
-    
-                default:
-                    ws.send("404")
-                    break;
+                    case "remove":
+                        removeQuery(msgJson.query);
+                        break;
+
+                    case "get":
+                        const items = await Bun.file("items.json").text();
+                        ws.send(items);
+                        break;
+
+                    default:
+                        ws.send("404")
+                        break;
+                }
+            } catch (error) {
+                ws.send("500")
             }
-        } catch (error) {
-         ws.send("500")   
-        }
-      }, // a message is received
-      open(ws) {}, // a socket is opened
-      close(ws, code, message) {}, // a socket is closed
-      drain(ws) {}, // the socket is ready to receive more data
+        }, // a message is received
+        open(ws) { }, // a socket is opened
+        close(ws, code, message) { }, // a socket is closed
+        drain(ws) { }, // the socket is ready to receive more data
     },
-  });
+});
 
 async function main() {
     const itemsText = await Bun.file("items.json").text();
@@ -127,42 +127,42 @@ async function main() {
         const body = await response.json();
         for (let index = 0; index < body.products.length; index++) {
             const product = body.products[index];
-                var diff = Date.parse(product.dateClosed.value) - Date.now();
+            var diff = Date.parse(product.dateClosed.value) - Date.now();
 
-                if (diff > 0 && diff <= 1800000 && product.sold == 0 && !checkForItem(data,product) && product.title.toLowerCase().includes(query.toLowerCase())) {
-                    product.item.query = query;
-                    data.push(hashCode(product.dateAdded.value + product.title));
-                    Bun.write(dataFile, JSON.stringify(data))
-                    console.log(product);
-                    fetch('https://ntfy.sh', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            "topic": "nellis",
-                            "message": "Current price: " + product.wprice + ", Retail price: " + product.item.retailPrice + ", Query: " + query,
-                            "title": "🚨"+product.title+"🚨",
-                            "attach": product.item.photos[0].url,
-                            "click": encodeURI("https://www.nellisauction.com/p/" + product.title.replace(/\s/g, "-").replace(/\//g, "-") + "/" + product.bidState.projectId)
-                        })
+            if (diff > 0 && diff <= 1800000 && product.sold == 0 && !checkForItem(data, product) && product.title.toLowerCase().includes(query.toLowerCase())) {
+                product.item.query = query;
+                data.push(hashCode(product.dateAdded.value + product.title));
+                Bun.write(dataFile, JSON.stringify(data))
+                console.log(product);
+                fetch('https://ntfy.sh', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        "topic": "nellis",
+                        "message": "Current price: " + product.wprice + ", Retail price: " + product.item.retailPrice + ", Query: " + query,
+                        "title": product.title,
+                        "attach": product.item.photos[0].url,
+                        "click": encodeURI("https://www.nellisauction.com/p/" + product.title.replace(/\s/g, "-").replace(/\//g, "-") + "/" + product.bidState.projectId)
                     })
+                })
 
-                }else if (diff > 0 && diff <= 180000 && product.sold == 0 && !checkForItem(data3min,product) && product.title.toLowerCase().includes(query.toLowerCase())) {
-                    product.item.query = query;
-                    data3min.push(hashCode(product.dateAdded.value + product.title));
-                    Bun.write(data3minFile, JSON.stringify(data3min))
-                    console.log(product);
-                    fetch('https://ntfy.sh', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            "topic": "nellis",
-                            "message": "Current price: " + product.wprice + ", Retail price: " + product.item.retailPrice + ", Query: " + query,
-                            "title": product.title,
-                            "priority": 4,
-                            "attach": product.item.photos[0].url,
-                            "click": encodeURI("https://www.nellisauction.com/p/" + product.title.replace(/\s/g, "-").replace(/\//g, "-") + "/" + product.bidState.projectId)
-                        })
+            } else if (diff > 0 && diff <= 180000 && product.sold == 0 && !checkForItem(data3min, product) && product.title.toLowerCase().includes(query.toLowerCase())) {
+                product.item.query = query;
+                data3min.push(hashCode(product.dateAdded.value + product.title));
+                Bun.write(data3minFile, JSON.stringify(data3min))
+                console.log(product);
+                fetch('https://ntfy.sh', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        "topic": "nellis",
+                        "message": "Current price: " + product.wprice + ", Retail price: " + product.item.retailPrice + ", Query: " + query,
+                        "title": "🚨" + product.title + "🚨",
+                        "priority": 4,
+                        "attach": product.item.photos[0].url,
+                        "click": encodeURI("https://www.nellisauction.com/p/" + product.title.replace(/\s/g, "-").replace(/\//g, "-") + "/" + product.bidState.projectId)
                     })
+                })
 
-                }
+            }
         }
     }
 }
