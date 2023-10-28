@@ -3,6 +3,9 @@
 const dataFile = Bun.file("data.json");
 const data = JSON.parse(await dataFile.text());
 
+const data3minFile = Bun.file("data3min.json");
+const data3min = JSON.parse(await dataFile.text());
+
 
 /**
  * Returns a hash code from a string
@@ -137,6 +140,23 @@ async function main() {
                             "topic": "nellis",
                             "message": "Current price: " + product.wprice + ", Retail price: " + product.item.retailPrice + ", Query: " + query,
                             "title": product.title,
+                            "attach": product.item.photos[0].url,
+                            "click": encodeURI("https://www.nellisauction.com/p/" + product.title.replace(/\s/g, "-").replace(/\//g, "-") + "/" + product.bidState.projectId)
+                        })
+                    })
+
+                }else if (diff > 0 && diff <= 180000 && product.sold == 0 && !checkForItem(data3min,product) && product.title.toLowerCase().includes(query.toLowerCase())) {
+                    product.item.query = query;
+                    data3min.push(hashCode(product.dateAdded.value + product.title));
+                    Bun.write(data3minFile, JSON.stringify(data3min))
+                    console.log(product);
+                    fetch('https://ntfy.sh', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            "topic": "nellis",
+                            "message": "Current price: " + product.wprice + ", Retail price: " + product.item.retailPrice + ", Query: " + query,
+                            "title": product.title,
+                            "priority": 4,
                             "attach": product.item.photos[0].url,
                             "click": encodeURI("https://www.nellisauction.com/p/" + product.title.replace(/\s/g, "-").replace(/\//g, "-") + "/" + product.bidState.projectId)
                         })
