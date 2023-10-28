@@ -139,7 +139,7 @@ async function main() {
                         body: JSON.stringify({
                             "topic": "nellis",
                             "message": "Current price: " + product.wprice + ", Retail price: " + product.item.retailPrice + ", Query: " + query,
-                            "title": product.title,
+                            "title": "🚨"+product.title+"🚨",
                             "attach": product.item.photos[0].url,
                             "click": encodeURI("https://www.nellisauction.com/p/" + product.title.replace(/\s/g, "-").replace(/\//g, "-") + "/" + product.bidState.projectId)
                         })
