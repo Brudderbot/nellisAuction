@@ -6,21 +6,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Query editor</title>
     <style>
+        input[type=text] {
+            color: #1D3557;
+            appearance: none;
+            border: none;
+            outline: none;
+            border-bottom: .2em solid #457B9D;
+            border-radius: .2em .2em 0 0;
+            padding: .4em;
+            margin-left: 4px;
+            margin-right: 4px;
+            box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2)
+        }
+
+        /* CSS */
+        button {
+            color: #1D3557;
+            background-color: #fff;
+            border-radius: 8px;
+            border-width: 0;
+            cursor: pointer;
+            display: inline-block;
+            font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 20px;
+            list-style: none;
+            margin: 0;
+            padding: 5px 6px;
+            text-align: center;
+            transition: all 200ms;
+            vertical-align: baseline;
+            white-space: nowrap;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            
+            box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2)
+        }
+        body {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            backdrop-filter: blur(6px);
+            background: linear-gradient(180deg, rgba(206, 206, 206, 1) 23%, rgba(234, 234, 234, 1) 100%);
+        }
+
         * {
             box-sizing: border-box;
         }
 
         .container {
+            filter: drop-shadow(8px 8px 6px #0000004d);
+            color: #1D3557;
             width: 60%;
             display: inline-block;
-            background: #d3efdf;
-            padding: 25px;
+            background: #A8DADC;
+            padding: 8px;
             max-width: 760px;
             margin: 25px;
             margin-left: 2%;
             overflow: hidden;
             border-radius: 10px;
-            border: 4px solid #b1c9bb;
+            border: 4px solid #457B9D;
             font-family: sans-serif;
         }
 
@@ -32,25 +80,30 @@
             width: 30%;
             font-size: 12px;
         }
-        #feed-list li{
+
+        #feed-list li {
             display: inline;
         }
-        #feed-list li img{
+
+        #feed-list li img {
             margin-top: 32px;
             width: 60px;
             float: left;
         }
-        #feed-list li a{
+
+        #feed-list li a {
             margin-top: 32px;
             width: 120px;
             height: 100px;
             overflow: scroll;
             float: right;
         }
-        #feed-list li a:link{
+
+        #feed-list li a:link {
             text-decoration: none;
             color: unset;
         }
+
         #feed .query-list {
             overflow-y: scroll;
             float: left;
@@ -60,18 +113,22 @@
 
         h1,
         h2 {
+            
             margin: 0;
             text-align: center;
             text-transform: uppercase;
 
         }
-
+        h1{
+            filter: drop-shadow(1px 1px 1px #00000070);
+        }
         h2 {
+            
             font-size: 20px;
             text-align: center;
-            border-bottom: 1px solid #b1c9bb;
+            border-bottom: 1px solid #A8DADC;
             padding: 0 0 10px;
-            color: #57635c;
+            color: #1D3557;
 
         }
 
@@ -80,10 +137,11 @@
         }
 
         .box {
+            filter: drop-shadow(3px 3px 2px #2222226b);
             padding: 10px 15px;
-            border: 2px solid #b1c9bb;
+            border: 2px solid #457B9D;
             border-radius: 5px;
-            background: #FFF;
+            background-color: #e9ecef;
             margin: 15px 0;
         }
 
@@ -93,6 +151,7 @@
             float: left;
             height: 50vh;
             width: 100%;
+
         }
 
         ul {
@@ -102,13 +161,40 @@
         }
 
         li {
-            padding: 10px;
-            border-bottom: 1px dotted #CCC;
+            padding: 12px;
+            border-bottom: 1px dotted #A8DADC;
         }
 
         .delete {
             float: right;
         }
+
+        @media screen and (max-width: 600px) {
+            #feed {
+                display: none;
+            }
+            body{
+                overflow: hidden;
+                margin: 0;
+                width: 100vw;
+                height: 100vh;
+            }
+            .container {
+                max-width: 100%;
+                width: 95%;
+                height: 90%;
+            }
+
+            .query-list {
+                overflow-y: scroll;
+                float: left;
+                height: 70%;
+                width: 100%;
+
+            }
+        }
+
+        /*960 x 768*/
     </style>
 </head>
 
@@ -159,7 +245,7 @@
                 console.log("message")
                 // Add the new list item to the query list
                 feedList.prepend(listItem);
-            }else{
+            } else {
                 console.log("no message")
             }
             console.log(data);
