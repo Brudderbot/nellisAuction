@@ -82,20 +82,28 @@
         }
 
         #feed-list li {
-            display: inline;
+            box-shadow: 1px 1px 6px #0000005d;
+            filter: drop-shadow( 1px 1px 1px #0000005d);
+            display: inline-block;
         }
 
         #feed-list li img {
-            margin-top: 32px;
-            width: 60px;
+            margin: 4px;
+            margin-top: 24px;
+
+            width: 35%;
             float: left;
         }
 
         #feed-list li a {
-            margin-top: 32px;
-            width: 120px;
-            height: 100px;
+            margin-top: 24px;
+            width: 60%;
+            height: 90px;
             overflow: scroll;
+            float: right;
+        }
+        #feed-list li p {
+            width: 60%;
             float: right;
         }
 
@@ -193,7 +201,14 @@
 
             }
         }
+        /*<section class="container" id="feed">
+        <h1>Feed</h1>
+        <div class="query-list box">
+            <ul id="feed-list"><li><a href="https://www.nellisauction.com/p/Dorman-949-099-Suspension-Air-Compressor-Compatible-with-Select-Cadillac---Chevrolet---GMC-Models-(OE-FIX)-OE-FIX-2001-2014/19210624" target="_blank">🚨Dorman 949-099 Suspension Air Compressor Compatible with Select Cadillac / Chevrolet / GMC Models (OE FIX) OE FIX 2001-2014🚨</a><img src="https://m.media-amazon.com/images/I/81vzoeoZ6tL.jpg"><p>Current price: 6, Retail price: 184.66, Query: air compressor</p></li>
 
+            </ul>
+        </div>
+    </section>*/
         /*960 x 768*/
     </style>
 </head>
@@ -235,14 +250,18 @@
                 const listItem = document.createElement("li");
                 const img = document.createElement("img");
                 const text = document.createElement("a");
+                const desc = document.createElement("p");
 
                 img.src = data.attachment.url;
                 text.href = data.click;
                 text.target = "_blank"
                 text.textContent = data.title;
                 listItem.appendChild(text);
+                desc.textContent = data.message;
+                
                 listItem.appendChild(img);
-                console.log("message")
+                listItem.appendChild(desc);
+                console.log(data.title)
                 // Add the new list item to the query list
                 feedList.prepend(listItem);
             } else {
