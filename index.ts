@@ -30,7 +30,7 @@ function hashCode(str: string) {
  * @return {boolean}
  */
 function checkForItem(list: Array<Number>, item: any) {
-    const hash = hashCode(item.dateAdded.value + item.title)
+    const hash = hashCode(item.openTime.value + item.title)
 
     for (let index = 0; index < list.length; index++) {
         if (list[index] == hash) {
@@ -127,38 +127,38 @@ async function main() {
         const body = await response.json();
         for (let index = 0; index < body.products.length; index++) {
             const product = body.products[index];
-            var diff = Date.parse(product.dateClosed.value) - Date.now();
+            var diff = Date.parse(product.closeTime.value) - Date.now();
 
-            if (diff > 0 && diff <= 1800000 && product.sold == 0 && !checkForItem(data, product) && product.title.toLowerCase().includes(query.toLowerCase())) {
-                product.item.query = query;
-                data.push(hashCode(product.dateAdded.value + product.title));
+            if (diff > 0 && diff <= 1800000 && !product.isClosed && !checkForItem(data, product) && product.title.toLowerCase().includes(query.toLowerCase())) {
+                product.query = query;
+                data.push(hashCode(product.openTime.value + product.title));
                 Bun.write(dataFile, JSON.stringify(data))
                 console.log(product);
                 fetch('https://ntfy.sh', {
                     method: 'POST',
                     body: JSON.stringify({
                         "topic": "nellis",
-                        "message": "Current price: " + product.wprice + ", Retail price: " + product.item.retailPrice + ", Query: " + query,
+                        "message": "Current price: " + product.currentPrice + ", Retail price: " + product.retailPrice + ", Query: " + query,
                         "title": product.title,
-                        "attach": product.item.photos[0].url,
-                        "click": encodeURI("https://www.nellisauction.com/p/" + product.title.replace(/\s/g, "-").replace(/\//g, "-") + "/" + product.bidState.projectId)
+                        "attach": product.photos[0].url,
+                        "click": encodeURI("https://www.nellisauction.com/p/" + product.title.replace(/\s/g, "-").replace(/\//g, "-") + "/" + product.id)
                     })
                 })
 
             } else if (diff > 0 && diff <= 180000 && product.sold == 0 && !checkForItem(data3min, product) && product.title.toLowerCase().includes(query.toLowerCase())) {
-                product.item.query = query;
-                data3min.push(hashCode(product.dateAdded.value + product.title));
+                product.query = query;
+                data3min.push(hashCode(product.openTime.value + product.title));
                 Bun.write(data3minFile, JSON.stringify(data3min))
                 console.log(product);
                 fetch('https://ntfy.sh', {
                     method: 'POST',
                     body: JSON.stringify({
                         "topic": "nellis",
-                        "message": "Current price: " + product.wprice + ", Retail price: " + product.item.retailPrice + ", Query: " + query,
+                        "message": "Current price: " + product.currentPrice + ", Retail price: " + product.retailPrice + ", Query: " + query,
                         "title": "🚨" + product.title + "🚨",
                         "priority": 4,
-                        "attach": product.item.photos[0].url,
-                        "click": encodeURI("https://www.nellisauction.com/p/" + product.title.replace(/\s/g, "-").replace(/\//g, "-") + "/" + product.bidState.projectId)
+                        "attach": product.photos[0].url,
+                        "click": encodeURI("https://www.nellisauction.com/p/" + product.title.replace(/\s/g, "-").replace(/\//g, "-") + "/" + product.id)
                     })
                 })
 
